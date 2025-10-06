@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// 1. Define the Student Structure
+struct Student {
+    int rollNo;
+    char name[50];
+    float marks;
+};
+
+// Comparator function for qsort to sort by Roll Number (ascending)
+int compareByRollNo(const void* a, const void* b) {
+    const struct Student* studentA = (const struct Student*)a;
+    const struct Student* studentB = (const struct Student*)b;
+    return (studentA->rollNo - studentB->rollNo);
+}
+
+// Function to add a student record
+void addRecord(struct Student list[], int *count, int capacity) {
+    if (*count >= capacity) {
+        printf("Record array is full. Cannot add more students.\n");
+        return;
+    }
+    printf("\nEnter Roll Number: ");
+    scanf("%d", &list[*count].rollNo);
+    printf("Enter Name: ");
+    scanf("%s", list[*count].name); // For simplicity, single word name
+    printf("Enter Marks: ");
+    scanf("%f", &list[*count].marks);
+    (*count)++;
+    printf("Record added successfully.\n");
+}
+
+// Function to display all records
+void displayRecords(struct Student list[], int count) {
+    if (count == 0) {
+        printf("\nNo records to display.\n");
+        return;
+    }
+    printf("\n--- Student Records ---\n");
+    printf("Roll No\tName\tMarks\n");
+    for (int i = 0; i < count; i++) {
+        printf("%d\t%s\t%.2f\n", list[i].rollNo, list[i].name, list[i].marks);
+    }
+}
+
+// Function to search a student by Roll Number (Linear Search)
+void searchRecord(struct Student list[], int count, int roll) {
+    for (int i = 0; i < count; i++) {
+        if (list[i].rollNo == roll) {
+            printf("\nRecord Found:\n");
+            printf("Roll No: %d, Name: %s, Marks: %.2f\n", list[i].rollNo, list[i].name, list[i].marks);
+            return;
+        }
+    }
+    printf("\nRecord with Roll No %d not found.\n", roll);
+}
+
+// Function to sort records
+void sortRecords(struct Student list[], int count) {
+    qsort(list, count, sizeof(struct Student), compareByRollNo);
+    printf("\nRecords sorted successfully by Roll Number.\n");
+}
+
+int main() {
+    const int CAPACITY = 100;
+    struct Student students[CAPACITY]; // 2. Array of Structures
+    int current_count = 0;
+    int choice, rollToSearch;
+
+    do {
+        printf("\n--- Student Record Management System ---\n");
+        printf("1. Add Record\n");
+        printf("2. Display All Records\n");
+        printf("3. Search by Roll No\n");
+        printf("4. Sort by Roll No\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                addRecord(students, &current_count, CAPACITY);
+                break;
+            case 2:
+                displayRecords(students, current_count);
+                break;
+            case 3:
+                printf("Enter Roll Number to search: ");
+                scanf("%d", &rollToSearch);
+                searchRecord(students, current_count, rollToSearch);
+                break;
+            case 4:
+                sortRecords(students, current_count);
+                displayRecords(students, current_count);
+                break;
+            case 5:
+                printf("Exiting System.\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 5);
+
+    return 0;
+}
